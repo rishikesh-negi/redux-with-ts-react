@@ -1,5 +1,5 @@
 import { addToCart } from "../store/cartSlice";
-import { useAppDispatch } from "../store/hooks";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 
 type ProductProps = {
   id: string;
@@ -17,6 +17,9 @@ export default function Product({
   description,
 }: ProductProps) {
   const dispatch = useAppDispatch();
+  const numInCart = useAppSelector(
+    (state) => state.cart.items.find((item) => item.id === id)?.quantity,
+  );
 
   function handleAddToCart() {
     dispatch(addToCart({ id, title, price }));
@@ -32,7 +35,10 @@ export default function Product({
           <p>{description}</p>
         </div>
         <p className="product-actions">
-          <button onClick={handleAddToCart}>Add to Cart</button>
+          {numInCart && numInCart > 0 && <span>{numInCart} in cart</span>}
+          <button onClick={handleAddToCart}>
+            Add {numInCart && numInCart > 0 ? "more" : "to Cart"}
+          </button>
         </p>
       </div>
     </article>
